@@ -10,6 +10,6 @@ const server = http.createServer((req, res) => {
     res.end('Servidor activo');
 });
 
-server.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
