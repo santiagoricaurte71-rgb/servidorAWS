@@ -3,20 +3,21 @@ const http = require('http');
 const PORT = 3000;
 
 const server = http.createServer((req, res) => {
-    // Configuración de respuesta
+
+    // Cabeceras
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Permitir peticiones OPTIONS
+    // Peticiones OPTIONS
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
         return;
     }
 
-    // Ruta principal
+    // GET /
     if (req.method === 'GET' && req.url === '/') {
         res.writeHead(200);
         res.end(JSON.stringify({
@@ -26,7 +27,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Endpoint para hacer preguntas
+    // POST /preguntar
     if (req.method === 'POST' && req.url === '/preguntar') {
 
         let body = '';
@@ -36,7 +37,11 @@ const server = http.createServer((req, res) => {
         });
 
         req.on('end', () => {
+
+            console.log('Datos recibidos:', body);
+
             try {
+
                 const data = JSON.parse(body);
 
                 const pregunta = data.pregunta;
@@ -49,29 +54,40 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
-                // Aquí puedes colocar la lógica de respuesta
                 let respuesta;
 
                 if (pregunta.toLowerCase().includes('hola')) {
                     respuesta = '¡Hola! ¿Cómo estás?';
+
                 } else if (pregunta.toLowerCase().includes('nombre')) {
                     respuesta = 'Soy tu servidor Node.js.';
-                } else if (pregunta.toLowerCase().includes('estado')) {
+
+                } else if (
+                    pregunta.toLowerCase().includes('estado') ||
+                    pregunta.toLowerCase().includes('servidor')
+                ) {
                     respuesta = 'El servidor está funcionando correctamente.';
+
                 } else {
                     respuesta = `Recibí tu pregunta: "${pregunta}"`;
                 }
 
                 res.writeHead(200);
+
                 res.end(JSON.stringify({
                     pregunta: pregunta,
                     respuesta: respuesta
                 }));
 
             } catch (error) {
+
+                console.error('Error procesando JSON:', error);
+
                 res.writeHead(400);
+
                 res.end(JSON.stringify({
-                    error: 'El JSON enviado no es válido'
+                    error: 'El JSON enviado no es válido',
+                    recibido: body
                 }));
             }
         });
@@ -79,13 +95,14 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Ruta inexistente
+    // Ruta no encontrada
     res.writeHead(404);
+
     res.end(JSON.stringify({
         error: 'Ruta no encontrada'
     }));
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor ejecutándose en http://0.0.0.0:${PORT}`);
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
