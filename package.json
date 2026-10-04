@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/santiagoricaurte71-rgb/servidorAWS/issues"
   },
-  "homepage": "https://github.com/santiagoricaurte71-rgb/servidorAWS#readme"
+  "homepage": "https://github.com/santiagoricaurte71-rgb/servidorAWS#readme",
+  "dependencies": {
+    "csv-parse": "^7.0.3",
+    "csv-stringify": "^6.9.0"
+  }
 }
